@@ -62,11 +62,11 @@ The smart contracts are live and deployed to the **Stellar Testnet** via automat
 
 ### 2. Automated Deployments (CI/CD)
 
-![CI/CD Pipeline](images/CICD.png)
+![CI/CD Pipeline](images/ci%20cd.png)
 
 ### 3. Smart Contract Test Coverage
 
-![Test Output](images/test_OUTPUT.png)
+![Test Output](images/test%20output.png)
 
 ---
 
