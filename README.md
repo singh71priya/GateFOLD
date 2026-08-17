@@ -43,8 +43,8 @@ The smart contracts are live and deployed to the **Stellar Testnet** via automat
 
 | Action | Transaction Hash | Explorer |
 |---|---|---|
-| 🎫 Ticket Minted | `69e38172597dc751b1a00faea2ef78c41f59fcc72aef0e292fee761e46a1c845` | [View](https://stellar.expert/explorer/testnet/tx/69e38172597dc751b1a00faea2ef78c41f59fcc72aef0e292fee761e46a1c845) |
-| ✅ Check-in Verified | `ae7ccd92475777525a61c9398594fab5fdaa99bd48019369557d8899d954bb1c` | [View](https://stellar.expert/explorer/testnet/tx/ae7ccd92475777525a61c9398594fab5fdaa99bd48019369557d8899d954bb1c) |
+| 🎫 Ticket Minted | `fa1bf27b94f69c1c6c86c7f48165430c5639d92094f3b37d78defe05465d64a7` | [View](https://stellar.expert/explorer/testnet/tx/fa1bf27b94f69c1c6c86c7f48165430c5639d92094f3b37d78defe05465d64a7) |
+| ✅ Check-in Verified | `e47aa7f568922d3d95628509ab283be74746c89a1e9359858c9f60c50e80b3f2` | [View](https://stellar.expert/explorer/testnet/tx/e47aa7f568922d3d95628509ab283be74746c89a1e9359858c9f60c50e80b3f2) |
 
 > The contracts are automatically redeployed on every push to `master` via the [Deploy to Testnet](.github/workflows/deploy.yml) GitHub Actions workflow.
 
