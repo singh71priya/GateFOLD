@@ -31,8 +31,8 @@ The smart contracts are live and deployed to the **Stellar Testnet** via automat
 
 | Contract | Contract ID | Explorer |
 |---|---|---|
-| 🏭 **Factory** | `CAMDA6P4RNBY3YDYOSHE3XNMANM55I2LGW2U4DLJFLB3N6VKUFRPUQ3I` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CAMDA6P4RNBY3YDYOSHE3XNMANM55I2LGW2U4DLJFLB3N6VKUFRPUQ3I) |
-| 📋 **Registry** | `CD3X7LYOHFUVMLCIQYNSIIU6JOMHOSZDXMPRO46AO4BYQRGQ3EOKNDQU` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CD3X7LYOHFUVMLCIQYNSIIU6JOMHOSZDXMPRO46AO4BYQRGQ3EOKNDQU) |
+| 🏭 **Factory** | `CCI22TC4XIMJA5YEKYCQBREF3NHHI3F6SSX4BCUXH7PWHILA6ITT2OUY` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CCI22TC4XIMJA5YEKYCQBREF3NHHI3F6SSX4BCUXH7PWHILA6ITT2OUY) |
+| 📋 **Registry** | `CC47AVQHZDFMGFA5DPJGMLAFVFEDZS422SZJQSFWMEA4GVLAJQ4BCIC3` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CC47AVQHZDFMGFA5DPJGMLAFVFEDZS422SZJQSFWMEA4GVLAJQ4BCIC3) |
 | 💰 **Token (XLM)** | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC) |
 
 **Network:** Stellar Testnet (Test SDF Network ; September 2015)  
