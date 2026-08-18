@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavBar from './components/NavBar';
 import Hero from './components/Hero';
 import CreateEventForm from './components/CreateEventForm';
 import BoxOffice from './components/BoxOffice';
 import GateCheckIn from './components/GateCheckIn';
 import EventFeed from './components/EventFeed';
-import Banner from './components/Banner';
+import LoadingOverlay from './components/LoadingOverlay';
 import { useWallet } from './hooks/useWallet';
 import { useContractEvents } from './hooks/useContractEvents';
 import { factoryClient } from './contracts/factoryClient';
 import { CONTRACTS } from './contracts/config';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function App() {
   const wallet = useWallet();
@@ -21,18 +22,22 @@ export default function App() {
   const [loadingEvent, setLoadingEvent] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [creatingEvent, setCreatingEvent] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  
+  // Show wallet errors as toasts
+  useEffect(() => {
+    if (wallet.error) {
+      toast.error(wallet.error);
+    }
+  }, [wallet.error]);
 
   async function handleLookupEvent(eventId) {
-    setError(null);
     setLoadingEvent(true);
     try {
       const result = await factoryClient.getEvent(eventId, wallet.address);
       setEvent(result);
       setTicket(null);
     } catch (err) {
-      setError(`Could not load event #${eventId}. It may not exist, or contract IDs in config.js need updating. (${err.message})`);
+      toast.error(`Could not load event #${eventId}. It may not exist.`);
       setEvent(null);
     } finally {
       setLoadingEvent(false);
@@ -41,10 +46,9 @@ export default function App() {
 
   async function handleCreateEvent({ name, faceValue, totalTickets, maxResaleBps, royaltyBps }) {
     if (!wallet.isConnected) {
-      setError('Connect a wallet first to publish an event.');
+      toast.error('Connect a wallet first to publish an event.');
       return;
     }
-    setError(null);
     setCreatingEvent(true);
     try {
       const { hash, returnValue } = await factoryClient.createEvent(
@@ -58,22 +62,18 @@ export default function App() {
         royaltyBps,
         wallet.signTransaction
       );
-      setSuccess(
-        <span>
+      toast.success(
+        <div>
           Event published! Event ID: <strong>{returnValue?.toString() || 'Unknown'}</strong>. <br />
-          <a
-            href={`https://stellar.expert/explorer/testnet/tx/${hash}`}
-            target="_blank"
-            rel="noreferrer"
-            className="underline"
-          >
-            View transaction on Stellar Expert
+          <a href={`https://stellar.expert/explorer/testnet/tx/${hash}`} target="_blank" rel="noreferrer" className="underline font-semibold mt-1 inline-block">
+            View transaction
           </a>
-        </span>
+        </div>,
+        { duration: 5000 }
       );
       wallet.refreshBalance();
     } catch (err) {
-      setError(`Failed to publish event: ${err.message}`);
+      toast.error(`Failed to publish event: ${err.message}`);
     } finally {
       setCreatingEvent(false);
     }
@@ -81,63 +81,53 @@ export default function App() {
 
   async function handleMint(eventId) {
     if (!wallet.isConnected) {
-      setError('Connect a wallet first.');
+      toast.error('Connect a wallet first.');
       return;
     }
-    setError(null);
     setActionLoading(true);
     try {
       const { hash, returnValue } = await factoryClient.mintTicket(eventId, wallet.address, wallet.signTransaction);
       const ev = await factoryClient.getEvent(eventId, wallet.address);
-      const maxResalePrice = (Number(ev.face_value) * 11000) / 10000; // display estimate; registry has the source of truth
+      const maxResalePrice = (Number(ev.face_value) * 11000) / 10000;
       
       const mintedTicketId = returnValue !== null ? returnValue.toString() : (ev.tickets_minted - 1).toString();
       
       setTicket({ ticketIdDisplay: mintedTicketId, owner: wallet.address, maxResalePrice });
       setEvent(ev);
-      setSuccess(
-        <span>
+      toast.success(
+        <div>
           Ticket minted! Ticket ID: <strong>{mintedTicketId}</strong>. <br />
-          <a
-            href={`https://stellar.expert/explorer/testnet/tx/${hash}`}
-            target="_blank"
-            rel="noreferrer"
-            className="underline"
-          >
-            View transaction on Stellar Expert
+          <a href={`https://stellar.expert/explorer/testnet/tx/${hash}`} target="_blank" rel="noreferrer" className="underline font-semibold mt-1 inline-block">
+            View transaction
           </a>
-        </span>
+        </div>,
+        { duration: 5000 }
       );
       wallet.refreshBalance();
     } catch (err) {
-      setError(`Mint failed: ${err.message}`);
+      toast.error(`Mint failed: ${err.message}`);
     } finally {
       setActionLoading(false);
     }
   }
 
   async function handleResell(eventId, ticketId, buyer, price) {
-    setError(null);
     setActionLoading(true);
     try {
-      const priceStroops = Math.round(Number(price) * 10000000); // XLM to stroops
+      const priceStroops = Math.round(Number(price) * 10000000);
       const { hash } = await factoryClient.resellTicket(eventId, ticketId, buyer, priceStroops, wallet.signTransaction);
-      setSuccess(
-        <span>
+      toast.success(
+        <div>
           Ticket resold successfully! <br />
-          <a
-            href={`https://stellar.expert/explorer/testnet/tx/${hash}`}
-            target="_blank"
-            rel="noreferrer"
-            className="underline"
-          >
-            View transaction on Stellar Expert
+          <a href={`https://stellar.expert/explorer/testnet/tx/${hash}`} target="_blank" rel="noreferrer" className="underline font-semibold mt-1 inline-block">
+            View transaction
           </a>
-        </span>
+        </div>,
+        { duration: 5000 }
       );
       wallet.refreshBalance();
     } catch (err) {
-      setError(`Resale failed — the price may exceed the organizer's cap. (${err.message})`);
+      toast.error(`Resale failed — the price may exceed the cap. (${err.message})`);
     } finally {
       setActionLoading(false);
     }
@@ -146,22 +136,38 @@ export default function App() {
   async function handleVerifyEntry(eventId, ticketId) {
     setActionLoading(true);
     try {
-      await factoryClient.verifyEntry(eventId, ticketId, wallet.address, wallet.signTransaction);
+      const { hash } = await factoryClient.verifyEntry(eventId, ticketId, wallet.address, wallet.signTransaction);
+      toast.success(
+        <div>
+          Entry verified for Ticket #{ticketId}! <br />
+          <a href={`https://stellar.expert/explorer/testnet/tx/${hash}`} target="_blank" rel="noreferrer" className="underline font-semibold mt-1 inline-block">
+            View transaction
+          </a>
+        </div>
+      );
       wallet.refreshBalance();
+    } catch (err) {
+      toast.error(`Verification failed: ${err.message}`);
     } finally {
       setActionLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          className: '!bg-zinc-900 !text-white !border !border-zinc-800',
+        }} 
+      />
+      {actionLoading && <LoadingOverlay message="Processing Transaction..." />}
+      {creatingEvent && <LoadingOverlay message="Publishing Event..." />}
+      
       <NavBar wallet={wallet} view={view} onViewChange={setView} />
       {view === 'buy' && <Hero />}
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 pb-20 space-y-6">
-        {(error || wallet.error) && <Banner type="error" message={error || wallet.error} onDismiss={() => setError(null)} />}
-        {success && <Banner type="success" message={success} onDismiss={() => setSuccess(null)} />}
-
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pb-20 space-y-6 pt-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             {view === 'buy' && (
@@ -200,3 +206,4 @@ export default function App() {
     </div>
   );
 }
+
