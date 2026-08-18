@@ -7,14 +7,14 @@ import GateCheckIn from './components/GateCheckIn';
 import EventFeed from './components/EventFeed';
 import LoadingOverlay from './components/LoadingOverlay';
 import { useWallet } from './hooks/useWallet';
-import { useContractEvents } from './hooks/useContractEvents';
+import { useLiveEvents } from './hooks/useLiveEvents';
 import { factoryClient } from './contracts/factoryClient';
 import { CONTRACTS } from './contracts/config';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function App() {
   const wallet = useWallet();
-  const { events, connected, error: eventError } = useContractEvents();
+  const { events, connected, error: eventError } = useLiveEvents();
 
   const [view, setView] = useState('buy');
   const [event, setEvent] = useState(null);
